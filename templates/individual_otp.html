@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block style %}
+    <style>
+         body{
+          background-image: url("https://5.imimg.com/data5/RZ/NG/RD/SELLER-8373809/otp-sms-services-500x500.png");
+          background-repeat: no-repeat;
+          height: 100%;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+         }  
+    </style>
+{% endblock style%}
+
+{% block content %}
+
+{% load static %}
+<html>
+<body>
+    <form action="{% url 'otp_verification_individual' %}" method="POST">
+    {%  csrf_token %}
+        <table align="center" border="2">
+            <tr><th>
+                <input type="password" placeholder="OTP"  name="otp" required>
+            </th></tr>
+            <tr><th>
+                <button type="submit">Check</button>
+            </th></tr>
+        </table>
+    </form>
+</body>
+</html>
+{% endblock %}
