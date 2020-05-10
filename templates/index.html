@@ -10,7 +10,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Mera Pay - Dashboard</title>
+  <title>Mera Pay</title>
 
   <!-- Custom fonts for this template-->
   <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -42,11 +42,11 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'business_home' %}">
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">Payments</div>
+        <div class="sidebar-brand-text mx-3">Mera Pay</div>
       </a>
 
       <!-- Divider -->
@@ -54,17 +54,8 @@
 
       <!-- Nav Item - Dashboard -->
       <li class="nav-item active">
-        <a class="nav-link" href="{% url 'index' %}">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span></a>
-      </li>
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <li class="nav-item">
         <a class="nav-link" href="{% url 'business_home' %}">
-          <i class="fas fa-fw fa-chart-area"></i>
+          <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Home</span></a>
       </li>
 
@@ -73,8 +64,26 @@
 
       <li class="nav-item">
         <a class="nav-link" href="{% url 'business_transaction' %}">
-          <i class="fas fa-fw fa-chart-area"></i>
+          <i class="fas fa-fw fa-table"></i>
           <span>Transactions</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'business_analysis' %}">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Analysis</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'business_profile' %}">
+          <i class="fas fa-fw fa-chart-area"></i>
+          <span>Profile</span></a>
       </li>
 
       <!-- Divider -->
@@ -83,7 +92,7 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'about' %}">
           <i class="fas fa-fw fa-table"></i>
-          <span>About</span></a>
+          <span>About Us</span></a>
       </li>
 
       <!-- Divider -->
@@ -99,20 +108,21 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
           aria-controls="collapsePages">
           <i class="fas fa-fw fa-folder"></i>
-          <span>Pages</span>
+          <span>More</span>
         </a>
         <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Login Screens:</h6>
-            <a class="collapse-item" href="{% url 'login' %}">Login</a>
-            <a class="collapse-item" href="{% url 'register' %}">Register</a>
-            <a class="collapse-item" href="{% url 'business_profile' %}">Business Profile</a>
+            <h6 class="collapse-header">More:</h6>
+            <a class="collapse-item" href="{% url 'exporttransaction' %}">Export to csv</a>
+            <a class="collapse-item" href="{% url 'business_profile' %}">My Profile</a>
+            <a class="collapse-item" href="{% url 'logout' %}">Logout</a>
             <div class="collapse-divider"></div>
+            <!--
             <h6 class="collapse-header">Other Pages:</h6>
             <a class="collapse-item" href="{% url '400' %}">400 Page</a>
             <a class="collapse-item" href="{% url '403' %}">403 Page</a>
             <a class="collapse-item" href="{% url '404' %}">404 Page</a>
-            <a class="collapse-item" href="{% url '500' %}">500 Page</a>
+            <a class="collapse-item" href="{% url '500' %}">500 Page</a> -->
           </div>
         </div>
       </li>
@@ -144,7 +154,12 @@
           </button>
 
           <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto"></ul>
+          <a href="#" data-toggle="tooltip">
+            <i class="fas fa-wallet">
+              <span>Wallet {{amount}}</span>
+            </i>
+            </a>
 
             <!-- Nav Item - Search Dropdown (Visible Only XS) -->
             <li class="nav-item dropdown no-arrow d-sm-none">
@@ -172,7 +187,7 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">User</span>
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Welcome</span>
                 <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
               </a>
               <!-- Dropdown - User Information -->
@@ -182,7 +197,7 @@
                   Profile
                 </a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
                 </a>
@@ -217,7 +232,7 @@
         <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
         <div class="modal-footer">
           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-          <a class="btn btn-primary" href="login.html">Logout</a>
+          <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
         </div>
       </div>
     </div>

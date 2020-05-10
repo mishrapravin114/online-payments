@@ -18,17 +18,29 @@
 {% load static %}
 <html>
 <body>
-    <form action="{% url 'otp_verification' %}" method="POST">
-    {%  csrf_token %}
-        <table align="center" border="2">
-            <tr><th>
-                <input type="password" placeholder="OTP"  name="otp" required>
-            </th></tr>
-            <tr><th>
-                <button type="submit">Check</button>
-            </th></tr>
-        </table>
-    </form>
+    <br><hr><br><hr> 
+     <div class="container">
+      <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+          <div class="card card-signin my-5">
+            <div class="card-body">
+              <h5 class="card-title text-center">Mera Pay - Just one step!</h5>
+                <form class="form-signin" action={% url 'otp_verification' %} method="post">
+                    {%csrf_token %}
+                    <div class="form-label-group">
+                      <label for="inputPassword">Please enter OTP</label><br>
+                      <input type="number" id="pan_number" name="otp" class="form-control" placeholder="Enter OTP here" required>
+                      <br>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Check</button>
+                    <hr class="my-2">
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
 </body>
 </html>
 {% endblock %}

@@ -289,3 +289,21 @@ def e_404(request):
 
 def e_500(request):
     return render(request, '500.html')
+
+
+
+#abcd
+from .serializers import ProfileSerializer, BusinessProfileSerializer
+from rest_framework import generics, mixins
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+class BusinessProfileDetail(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'business_profile.html'
+
+    def get(self, request, pk):
+        profile = get_object_or_404(BusinessProfile, pk=pk)
+        serializer = BusinessProfile(profile)
+        return Response({'serializer': serializer, 'profile': profile})

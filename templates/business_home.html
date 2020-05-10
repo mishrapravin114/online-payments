@@ -2,15 +2,10 @@
 {% block content %}
 <!-- {% load static %} -->
 <h2>Business Home</h2>
-<div class="border-top pt-3">
-    <small class="text-muted">
-        <a href="{% url 'index' %}">Back to Home Page</a>
-    </small>
-</div>
 
 <div style="display : flex">
-    Services subscribed:
-
+    Services subscribed:<br><hr>
+    <br>
     <form action="/business/service_add/" method="post"> 
     {% csrf_token %}
       <div class="form-group">

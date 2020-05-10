@@ -89,16 +89,15 @@ def index_individual(request):
         for profile in service.services_of_business.all():
             count = count + 1
             amount = 10
-            data = data + [[service.name,str(profile.user)[7:],service.image,count,amount]]
+            data = data + [[service.name,str(profile.user),service.image,count,amount]]
             print(data)
     service = Service.objects.all()
-    
-    return render(request, 'individual_index.html',{'service': data})
+    amount_left=request.user.wallet
+    return render(request, 'individual_index.html',{'service': data,'amount':amount_left})
+
+
 def pay_individual(request , service_name ,service_owner ,service_price ):
-    print(service_name,type(service_owner),service_price)
-    service_owner = str(service_owner)
-    #deduct balance
-    print(service_name,service_owner,service_price)
+    print(service_name,type(service_owner),service_owner, service_price)
     #deduct balance
     logged_in_user = User.objects.filter(username=request.user.username).first()
     print(logged_in_user)
