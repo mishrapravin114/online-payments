@@ -19,7 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('business.urls')),
-    path('customers', include('customers.urls')),
+    path('customers/', include('customers.urls')),
 ]
 
 handler400 = 'business.views.error_400'

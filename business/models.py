@@ -14,7 +14,7 @@ class Profile(AbstractUser):
     #date_joined - from Inbuilt User table
     #password - from Inbuilt User table   
     phone = models.IntegerField(unique=True,null=True)
-    wallet = models.DecimalField(default=Decimal(0.0), decimal_places=2, max_digits=64, null=True)
+    wallet = models.DecimalField(default=Decimal(1000.0), decimal_places=2, max_digits=64, null=True)
     profile_type = models.CharField(max_length=50, null=True)
 
     def __str__(self):
@@ -25,6 +25,7 @@ class Service(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to='image', blank = True)
     business_profile = models.ManyToManyField("BusinessProfile", blank=True, related_name="business_of_services")
+    price = models.DecimalField(default=Decimal(0.0), decimal_places=10, max_digits=64, null=True)
 
     def __str__(self):
         return "{}".format(self.name)

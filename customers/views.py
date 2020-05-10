@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout as django_logout
 from django.contrib.auth.decorators import login_required
-from .models import Service, BusinessProfile, Transaction
+from .models import Service, BusinessProfile, Transaction, Profile
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.core.mail import send_mail
@@ -17,19 +17,10 @@ import plotly.express as px
 from plotly.offline import plot
 from plotly.graph_objs import Scatter
 
-import logging 
-l = logging.getLogger('django.db.backends') 
-l.setLevel(logging.DEBUG) 
-l.addHandler(logging.StreamHandler())
-
-
-
 otp = 0
 
 def signupUser_individual(request):   
-    print("sxsxiuhki") 
     if request.method == "POST":
-        print("sxsxiuhki")
         username = request.POST['username']
         password = request.POST['password']
         first_name = request.POST['first_name']
@@ -41,17 +32,15 @@ def signupUser_individual(request):
         if User.objects.filter(username=username).exists():
             messages.success(request, "Account already exist")
             return render(request, 'individual_login.html')
-        user = User.objects.create_user(username=username, password=password ,email = email,first_name=first_name,last_name=last_name)
+        user = User.objects.create_user(username=username, password=password ,email = email,first_name=first_name,last_name=last_name,wallet = 1000)
         user.first_name = first_name
         user.last_name = last_name
         user.save()  
-        print("skiujnskus")
         global otp
         otp = randint(100000, 999999)          
         send_mail(
             'django_test',str(otp),'mishrapravin214@gmail.com',['mishrapravin441@gmail.com'],fail_silently=False)
         login(request, user)
-        print("skiujnskus")
         return render(request, 'individual_otp.html', {'user':request.user})        
     return render(request, 'individual_signup.html')
 
@@ -84,7 +73,6 @@ def otp_verification_individual(request):
 
     if request.method == "POST":
         userotp = request.POST['otp']
-        print(userotp,type(userotp))
         return redirect('index_individual')
     else:
             messages.error(request, "Invalid Otp! Please try again")
@@ -93,10 +81,38 @@ def otp_verification_individual(request):
     return render(request, "individual_otp.html")
 
 def index_individual(request):
+    data = []
     service = Service.objects.all()
-    print(service)
-    return render(request, 'individual_index.html',{'service': service})
-
+    services = Service.objects.all()
+    count = 1
+    for service in services:     
+        for profile in service.services_of_business.all():
+            count = count + 1
+            amount = 10
+            data = data + [[service.name,str(profile.user)[7:],service.image,count,amount]]
+            print(data)
+    service = Service.objects.all()
+    
+    return render(request, 'individual_index.html',{'service': data})
+def pay_individual(request , service_name ,service_owner ,service_price ):
+    print(service_name,type(service_owner),service_price)
+    service_owner = str(service_owner)
+    #deduct balance
+    print(service_name,service_owner,service_price)
+    #deduct balance
+    logged_in_user = User.objects.filter(username=request.user.username).first()
+    print(logged_in_user)
+    logged_in_user.wallet = logged_in_user.wallet - service_price
+    logged_in_user.save()   
+    business_user=User.objects.filter(username=service_owner).first()
+    print(business_user)
+    business_user.wallet += service_price
+    business_user.save()    
+    transaction = Transaction.objects.create(by=request.user,
+                    to = BusinessProfile.objects.filter(user=User.objects.filter(username=service_owner).first()).first(),
+                    amount= service_price, service=Service.objects.filter(name=service_name).first())
+    transaction.save()    
+    return render(request, 'about.html')
 
 #@login_required
 def individual_transaction(request):
@@ -167,12 +183,6 @@ def individual_analysis(request):
                                                     'service_per_month':service_per_month,
                                                     'number_times_service':number_times_service})
 
-
-@login_required
-def about_individual(request):
-    return render(request, 'about.html')
-
-
 def error_400(request, exception):
     return render(request, '400.html')
 
@@ -180,6 +190,8 @@ def error_400(request, exception):
 def error_403(request, exception):
     return render(request, '403.html')
 
+def about_individual(request):
+    return render(request, 'about.html')
 
 def error_404(request, exception):
     return render(request, '404.html')

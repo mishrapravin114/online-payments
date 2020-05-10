@@ -16,11 +16,6 @@ import plotly.express as px
 from plotly.offline import plot
 from plotly.graph_objs import Scatter
 
-import logging 
-l = logging.getLogger('django.db.backends') 
-l.setLevel(logging.DEBUG) 
-l.addHandler(logging.StreamHandler())
-
 User = get_user_model()
 
 otp=0
@@ -103,7 +98,7 @@ def business_signup(request):
         service =  Service.objects.filter(name=service_name).first()
         service.save()
         business_profile_service_list = []
-        
+        services = Service.objects.prefetch_related('business_profile').filter(business_profile__user=request.user)
         for index, current_service in enumerate(services):
             if current_service in business_profile_service_list :
                 messages.success(request, "You Service already exists!")
@@ -116,7 +111,6 @@ def business_signup(request):
         business_profile.service.add(Service.objects.filter(name=service_name).first())
         
         service_list = Service.objects.all()
-        services = Service.objects.prefetch_related('business_profile').filter(business_profile__user=request.user)
         messages.success(request, "You details are added successfully added!")
         return render(request, 'business_home.html',{'services':services ,'service_list': service_list })
 

@@ -18,7 +18,35 @@
 
   <!-- Custom styles for this template-->
     <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
-
+    <style>
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .dropdown-content a:hover {background-color: #ddd;}
+    
+    .dropdown:hover .dropdown-content {display: block;}
+    
+    .dropdown:hover .dropbtn {background-color: #3e8e41;}
+      </style>
+    
   {% block style %}
 
   {% endblock style %}    
@@ -64,13 +92,13 @@
 
       <li class="nav-item">
         <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-chart-area"></i>
+          <i class="fas fa-home"></i>
           <span>Home</span></a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-chart-area"></i>
+          <i class="fas fa-history"></i>
           <span>Wallet</span></a>
       </li>
 
@@ -85,7 +113,7 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-chart-area"></i>
+          <i class="far fa-money-bill-alt"></i>
           <span>Payments Options</span></a>
       </li>
 
@@ -95,7 +123,7 @@
 
       <li class="nav-item">
         <a class="nav-link" href="#">
-          <i class="fas fa-fw fa-table"></i>
+          <i class="far fa-address-card"></i>
           <span>About</span></a>
       </li>
 
@@ -149,7 +177,13 @@
           </button>
 
           <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto"></ul>
+          <a href="#" data-toggle="tooltip">
+            <i class="fas fa-wallet">
+              <span>Wallet 0</span>
+            </i>
+            </a>
+
 
             <!-- Nav Item - Search Dropdown (Visible Only XS) -->
             <li class="nav-item dropdown no-arrow d-sm-none">
@@ -201,24 +235,26 @@
 
         <div style="display : flex">
           {% for ser in service %}
-          <div class="card" style="width: 18rem;">
-            <img src="{{ser.image.url}}" class="card-img-top" alt="Image not found" height="200" width="200">
+          <div class="card" style="width: 13rem;margin-left: 2rem;">
+            <img src="{{ser.2.url}}" class="card-img-top" alt="Image not found" height="100" width="100">
             <div class="card-body">
-              <h5 class="card-title">{{ser.name}}</h5>
-              <p class="card-text">{{ser.name}} is for electronics,home appliances</p>
+              <h5 class="card-title">{{ser.3}}</h5>
+              <h5 class="card-title">Service name {{ser.0}}</h5>
+              <p class="card-text">Serice Owner {{ser.1}}</p>
+              <p class="card-text">Serice Price {{ser.4}}</p>
             </div>
-            </div>
+
             <div class="card-body dropdown">
               <button class="dropbtn">Pay</button>
-              <div class="dropdown-content">
-                <a href="#">Payments Wallet</a>
+              <div class="dropdown-content" >
+                <a href="{% url 'pay_individual' ser.0 ser.1 ser.4 %}">Payments Wallet</a>       
                 <a href="#">Payments creditcard</a>
                 <a href="#">Payments debicard</a>
               </div>
             </div>
             </div> 
             {% endfor %}
-            
+            </div>
 
         {% block content %}{% endblock %}
 
