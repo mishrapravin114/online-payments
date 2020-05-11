@@ -167,7 +167,7 @@ def pay_individual(request , service_name ,service_owner ,service_price, payment
     transaction.save()    
     logged_in_user = User.objects.filter(username=request.user.username).first()
     balance = 10
-    return redirect('individual_transaction')
+    return render(request, 'about.html', locals())
 
 #@login_required
 def individual_transaction(request):
