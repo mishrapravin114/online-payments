@@ -18,8 +18,8 @@ class Profile(AbstractUser):
     profile_type = models.CharField(max_length=50, null=True)
     credit_number = models.IntegerField(default=1000, null=True)
     debit_number = models.IntegerField(default=10000,null=True)
-    debit_balance = models.DecimalField(default=Decimal(50000.0), decimal_places=2, max_digits=64, null=True)
-    credit_balance = models.DecimalField(default=Decimal(50000.0), decimal_places=2, max_digits=64, null=True)
+    debit_balance = models.IntegerField(default=50000,null=True)
+    credit_balance = models.IntegerField(default=50000,null=True)
 
     def __str__(self):
         return "{}".format(self.username)

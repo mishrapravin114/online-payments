@@ -19,7 +19,6 @@ from plotly.offline import plot
 from plotly.graph_objs import Scatter
 
 otp = 0
-balance = 0
 
 def signupUser_individual(request):   
     if request.method == "POST":
@@ -131,27 +130,31 @@ def index_individual(request):
     for service in services:     
         for profile in service.services_of_business.all():
             count = count + 1
-            amount = 10
             logged_in_user = User.objects.filter(username=request.user.username).first()
-            global balance
-            balance = logged_in_user.wallet
-            data = data + [[service.name,str(profile.user),service.image,count,amount] ]
+            data = data + [[service.name,str(profile.user),service.image,count,service.price] ]
             print(data)
     service = Service.objects.all()
+    payment_type = ['wallet', 'credit', 'debit']
     
-    return render(request, 'individual_index.html',{'service': data , 'balance' : logged_in_user.wallet ,'credit_bal' :logged_in_user.credit_balance , 'debit_bal' :logged_in_user.debit_balance , 'credit_num' : logged_in_user.credit_number, 'debit_num' : logged_in_user.debit_number  })
+    return render(request, 'individual_index.html',{'service': data , 'balance' : logged_in_user.wallet ,'credit_bal' :logged_in_user.credit_balance , 'debit_bal' :logged_in_user.debit_balance , 'credit_num' : logged_in_user.credit_number, 'debit_num' : logged_in_user.debit_number, 'payment_type' : payment_type })
 
 
-def pay_individual(request , service_name ,service_owner ,service_price ):
+def pay_individual(request , service_name ,service_owner ,service_price, payment_type ):
     print(service_name,type(service_owner),service_price)
     service_owner = str(service_owner)
     #deduct balance
     logged_in_user = User.objects.filter(username=request.user.username).first()
-    print(logged_in_user)
+    if payment_type == 'credit' :
+        logged_in_user.wallet = logged_in_user.credit_balance - service_price
+    elif payment_type == 'wallet' :
+        logged_in_user.wallet = logged_in_user.wallet - service_price
+    elif payment_type == 'debit' :
+        logged_in_user.wallet = logged_in_user.debit_balance - service_price
+
     logged_in_user.wallet = logged_in_user.wallet - service_price
     logged_in_user.save()   
     business_user=User.objects.filter(username=service_owner).first()
-    print(business_user)
+
     business_user.wallet += service_price
     business_user.save()    
     transaction = Transaction.objects.create(by=request.user,

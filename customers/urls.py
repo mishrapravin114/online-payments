@@ -11,6 +11,6 @@ urlpatterns = [
     path('signupUser_individual/',views.signupUser_individual,name="signupUser_individual"),
     path('otp_verification_individual/',views.otp_verification_individual,name="otp_verification_individual"),
     path('logout_individual/',views.logout_individual,name="logout_individual"),
-    path('pay_individual/<str:service_name>/<str:service_owner>/<int:service_price>/', views.pay_individual, name='pay_individual'),
+    path('pay_individual/<str:service_name>/<str:service_owner>/<int:service_price>/<str:payment_type>/', views.pay_individual, name='pay_individual'),
     path('home_individual/', views.home_individual, name='home_individual'),
 ] + static(settings.MEDIA_URL,document_root =  settings.MEDIA_ROOT)

@@ -269,9 +269,9 @@
             <div class="card-body dropdown">
               <button class="dropbtn">Pay</button>
               <div class="dropdown-content" >
-                <a href="{% url 'pay_individual' ser.0 ser.1 ser.4 %}">Payments Wallet</a>       
-                <a href="#">Payments creditcard</a>
-                <a href="#">Payments debicard</a>
+                <a href="{% url 'pay_individual' ser.0 ser.1 ser.4 payment_type.0 %}">Payments Wallet</a>       
+                <a href="{% url 'pay_individual' ser.0 ser.1 ser.4 payment_type.1 %}">Payments creditcard</a>
+                <a href="{% url 'pay_individual' ser.0 ser.1 ser.4 payment_type.2 %}">Payments debicard</a>
               </div>
             </div>
             </div> 
