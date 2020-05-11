@@ -56,9 +56,9 @@ def signupUser_individual(request):
         #     Error = Error + 1
         #     message_error = message_error + ['Email registered with different account']
 
-        if User.objects.filter(phone=phone).exists():
-            Error = Error + 1
-            message_error = message_error + ['Phone registered with different account']
+        # if User.objects.filter(phone=phone).exists():
+        #     Error = Error + 1
+        #     message_error = message_error + ['Phone registered with different account']
 
         check = True
         while check :
