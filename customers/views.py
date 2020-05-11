@@ -30,8 +30,8 @@ def signupUser_individual(request):
         
         Error = 0
         message_error = [] 
-        credit_number = random.randint(0,22)
-        debit_number = random.randint(0,13)
+        credit_number =  randint(10000000000000000, 99999999999999999)
+        debit_number = randint(1000000000000,9999999999999)
         if len(username)<5:
             messages.error(request, "Length of username  must be of atleast 5 Digit")
             return render(request, 'individual_signup.html')       
@@ -58,29 +58,32 @@ def signupUser_individual(request):
         # if User.objects.filter(phone=phone).exists():
         #     Error = Error + 1
         #     message_error = message_error + ['Phone registered with different account']
+        print('shnsi')
 
         check = True
         while check :
             if User.objects.filter(credit_number=credit_number).exists():
-               credit_number = random.randint(0,22)
+               credit_number =  randint(100000000000000000, 99999999999999999)
             else :
-                check = False
-        check = True
+                break
         while check :
             if User.objects.filter(debit_number=debit_number).exists():
-               debit_number = random.randint(0,13)
+               debit_number = randint(1000000000000,9999999999999)
             else :
-                check = False
+                break
         if Error > 0:
             return render(request, 'individual_signup.html',{'messages' : message_error})
+        print('shnsi')
         user = User.objects.create_user(username=username, password=password ,email = email,first_name=first_name,last_name=last_name,wallet = 1000, credit_number = credit_number, debit_number =debit_number )
         user.first_name = first_name
+        print('shnsi')
         user.last_name = last_name
         user.save()  
         global otp
         otp = randint(100000, 999999)          
         send_mail(
             'django_test',str(otp),'mishrapravin214@gmail.com',['mishrapravin441@gmail.com'],fail_silently=False)
+        print('shnsi')
         login(request, user)
         return render(request, 'individual_otp.html', {'user':request.user})        
     return render(request, 'individual_signup.html')
@@ -131,7 +134,7 @@ def index_individual(request):
         for profile in service.services_of_business.all():
             count = count + 1
             logged_in_user = User.objects.filter(username=request.user.username).first()
-            data = data + [[service.name,str(profile.user),service.image,count,service.price] ]
+            data = data + [[service.name,str(profile.user),service.image,count,int(service.price)] ]
             print(data)
     service = Service.objects.all()
     payment_type = ['wallet', 'credit', 'debit']

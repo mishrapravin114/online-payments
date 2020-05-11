@@ -40,8 +40,8 @@ def registration(request):
         profile_type = 'business'
         Error = 0
         message_error = []
-        credit_number = random.randint(0,22)
-        debit_number = random.randint(0,13)
+        credit_number =  randint(10000000000000000, 99999999999999999)
+        debit_number = randint(1000000000000,9999999999999)
 
         if len(username)<5:
             Error = Error + 1
@@ -66,13 +66,13 @@ def registration(request):
         check = True
         while check :
             if User.objects.filter(credit_number=credit_number).exists():
-               credit_number = random.randint(0,22)
+               credit_number =randint(10000000000000000, 99999999999999999)
             else :
                 check = False
         check = True
         while check :
             if User.objects.filter(debit_number=debit_number).exists():
-               debit_number = random.randint(0,13)
+               debit_number = randint(1000000000000,9999999999999)
             else :
                 check = False
         if Error > 0:
@@ -98,6 +98,7 @@ def otp_verification(request):
     if request.method == "POST":
         userotp = request.POST['otp']
         if str(otp) == userotp:
+            service = Service.objects.all()
             return render(request, 'business_signup.html', {'service':service})    
         else:
             messages.error(request, "Invalid OTP! Please try again!")
