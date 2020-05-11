@@ -16,9 +16,13 @@ class Profile(AbstractUser):
     phone = models.IntegerField(unique=True,null=True)
     wallet = models.DecimalField(default=Decimal(1000.0), decimal_places=2, max_digits=64, null=True)
     profile_type = models.CharField(max_length=50, null=True)
+    credit_number = models.IntegerField(default=1000, null=True)
+    debit_number = models.IntegerField(default=10000,null=True)
+    debit_balance = models.DecimalField(default=Decimal(50000.0), decimal_places=2, max_digits=64, null=True)
+    credit_balance = models.DecimalField(default=Decimal(50000.0), decimal_places=2, max_digits=64, null=True)
 
     def __str__(self):
-        return "{} {}".format(self.first_name, self.last_name)
+        return "{}".format(self.username)
 
 
 class Service(models.Model):

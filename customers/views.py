@@ -9,6 +9,7 @@ User = get_user_model()
 from django.core.mail import send_mail
 from random import randint
 from django.utils import timezone
+import random
 from decimal import Decimal
 import csv
 from django.http import JsonResponse
@@ -18,6 +19,7 @@ from plotly.offline import plot
 from plotly.graph_objs import Scatter
 
 otp = 0
+balance = 0
 
 def signupUser_individual(request):   
     if request.method == "POST":
@@ -26,13 +28,53 @@ def signupUser_individual(request):
         first_name = request.POST['first_name']
         last_name = request.POST['last_name'] 
         email =  request.POST['email']     
+        
+        Error = 0
+        message_error = [] 
+        credit_number = random.randint(0,22)
+        debit_number = random.randint(0,13)
         if len(username)<5:
             messages.error(request, "Length of username  must be of atleast 5 Digit")
             return render(request, 'individual_signup.html')       
         if User.objects.filter(username=username).exists():
             messages.success(request, "Account already exist")
             return render(request, 'individual_login.html')
-        user = User.objects.create_user(username=username, password=password ,email = email,first_name=first_name,last_name=last_name,wallet = 1000)
+        if len(username)<5:
+            Error = Error + 1
+            message_error = message_error + ['Length of user must be atleast five digit']
+
+        if User.objects.filter(username=username).exists():
+            Error = Error + 1
+            message_error = message_error + ['Username already exists']
+
+
+        if User.objects.filter(first_name=first_name).exists():
+            Error = Error + 1
+            message_error = message_error + ['First name already exists']
+
+        # if User.objects.filter(email=email).exists():
+        #     Error = Error + 1
+        #     message_error = message_error + ['Email registered with different account']
+
+        if User.objects.filter(phone=phone).exists():
+            Error = Error + 1
+            message_error = message_error + ['Phone registered with different account']
+
+        check = True
+        while check :
+            if User.objects.filter(credit_number=credit_number).exists():
+               credit_number = random.randint(0,22)
+            else :
+                check = False
+        check = True
+        while check :
+            if User.objects.filter(debit_number=debit_number).exists():
+               debit_number = random.randint(0,13)
+            else :
+                check = False
+        if Error > 0:
+            return render(request, 'individual_signup.html',{'messages' : message_error})
+        user = User.objects.create_user(username=username, password=password ,email = email,first_name=first_name,last_name=last_name,wallet = 1000, credit_number = credit_number, debit_number =debit_number )
         user.first_name = first_name
         user.last_name = last_name
         user.save()  
@@ -73,8 +115,9 @@ def otp_verification_individual(request):
 
     if request.method == "POST":
         userotp = request.POST['otp']
-        return redirect('index_individual')
-    else:
+        if str(otp) == userotp: 
+            return redirect('index_individual')
+        else:
             messages.error(request, "Invalid Otp! Please try again")
             return render(request, "individual_signup.html")
             
@@ -89,15 +132,19 @@ def index_individual(request):
         for profile in service.services_of_business.all():
             count = count + 1
             amount = 10
-            data = data + [[service.name,str(profile.user),service.image,count,amount]]
+            logged_in_user = User.objects.filter(username=request.user.username).first()
+            global balance
+            balance = logged_in_user.wallet
+            data = data + [[service.name,str(profile.user),service.image,count,amount] ]
             print(data)
     service = Service.objects.all()
-    amount_left=request.user.wallet
-    return render(request, 'individual_index.html',{'service': data,'amount':amount_left})
+    
+    return render(request, 'individual_index.html',{'service': data , 'balance' : logged_in_user.wallet ,'credit_bal' :logged_in_user.credit_balance , 'debit_bal' :logged_in_user.debit_balance , 'credit_num' : logged_in_user.credit_number, 'debit_num' : logged_in_user.debit_number  })
 
 
 def pay_individual(request , service_name ,service_owner ,service_price ):
-    print(service_name,type(service_owner),service_owner, service_price)
+    print(service_name,type(service_owner),service_price)
+    service_owner = str(service_owner)
     #deduct balance
     logged_in_user = User.objects.filter(username=request.user.username).first()
     print(logged_in_user)
@@ -111,7 +158,9 @@ def pay_individual(request , service_name ,service_owner ,service_price ):
                     to = BusinessProfile.objects.filter(user=User.objects.filter(username=service_owner).first()).first(),
                     amount= service_price, service=Service.objects.filter(name=service_name).first())
     transaction.save()    
-    return render(request, 'about.html')
+    logged_in_user = User.objects.filter(username=request.user.username).first()
+    balance = 10
+    return render(request, 'about.html',{'balance' : balance})
 
 #@login_required
 def individual_transaction(request):
@@ -178,9 +227,10 @@ def individual_analysis(request):
     number_times_service = fig.to_html(full_html=False)
     
     messages.success(request, "Welcome to the analysis page!")
+    logged_in_user = User.objects.filter(username=request.user.username).first()
     return render(request, 'individual_analysis.html', {'daywise':daywise, 
                                                     'service_per_month':service_per_month,
-                                                    'number_times_service':number_times_service})
+                                                    'number_times_service':number_times_service, 'balance' : logged_in_user.wallet})
 
 def error_400(request, exception):
     return render(request, '400.html')

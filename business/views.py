@@ -10,6 +10,7 @@ from random import randint
 from django.utils import timezone
 from decimal import Decimal
 import csv
+import random
 from django.http import JsonResponse
 from django.views.generic import TemplateView
 import plotly.express as px
@@ -24,7 +25,10 @@ def home(request):
     return render(request, 'home.html')
 
 def business_index(request):
-    return render(request, 'index.html')
+    logged_in_user = User.objects.filter(username=request.user.username).first()
+    print(logged_in_user.debit_number)
+    
+    return render(request, 'index.html', {'credit_num':logged_in_user.credit_number, 'debit_num':logged_in_user.debit_number,'credit_bal':logged_in_user.credit_balance, 'debit_bal':logged_in_user.debit_balance})
 
 def registration(request):   
 
@@ -35,18 +39,48 @@ def registration(request):
         email =  request.POST['email'] 
         phone = request.POST['phone']
         profile_type = request.POST['profile_type']
+        Error = 0
+        message_error = []
+        credit_number = random.randint(0,22)
+        debit_number = random.randint(0,13)
 
         if len(username)<5:
-            messages.error(request, "Length of username  must be of atleast 5 Digit")
-            return render(request, 'register.html')   
+            Error = Error + 1
+            message_error = message_error + ['Length of user must be atleast five digit']
 
         if User.objects.filter(username=username).exists():
-            messages.success(request, "Account already exists! Please try again!")
-            return render(request, 'login.html')
+            Error = Error + 1
+            message_error = message_error + ['Username already exists']
 
+
+        if User.objects.filter(first_name=first_name).exists():
+            Error = Error + 1
+            message_error = message_error + ['First name already exists']
+
+        # if User.objects.filter(email=email).exists():
+        #     Error = Error + 1
+        #     message_error = message_error + ['Email registered with different account']
+
+        if User.objects.filter(phone=phone).exists():
+            Error = Error + 1
+            message_error = message_error + ['Phone registered with different account']
+        check = True
+        while check :
+            if User.objects.filter(credit_number=credit_number).exists():
+               credit_number = random.randint(0,22)
+            else :
+                check = False
+        check = True
+        while check :
+            if User.objects.filter(debit_number=debit_number).exists():
+               debit_number = random.randint(0,13)
+            else :
+                check = False
+        if Error > 0:
+            return render(request, 'register.html',{'messages' : message_error})
         user = User.objects.create_user(username=username, password=request.POST.get('password'), \
                                     email=email, first_name=first_name, \
-                                    last_name=last_name, phone=phone, profile_type=profile_type)
+                                    last_name=last_name, phone=phone, profile_type=profile_type, credit_number = credit_number, debit_number = debit_number)
 
         user.save()  
 
@@ -81,7 +115,6 @@ def otp_verification(request):
 def business_signup(request):
 
     if request.method == "POST":
-        print('dddd')
         business_profile = BusinessProfile(business_name=request.POST.get("business_name"),
                                         pan_number=request.POST.get("pan_number"),
                                         pan_name=request.POST.get("pan_name"),
@@ -149,7 +182,9 @@ def logoutUser(request):
 def business_home(request):
     services = Service.objects.prefetch_related('business_profile').filter(business_profile__user=request.user)     
     service_list = Service.objects.all()
-    return render(request, 'business_home.html',{'services':services ,'service_list': service_list })
+    logged_in_user = User.objects.filter(username=request.user.username).first()
+    print(logged_in_user)
+    return render(request, 'business_home.html',{'services':services ,'service_list': service_list, 'balance' : logged_in_user.wallet, 'credt_bal' : logged_in_user.credit_balance , 'debit_bal': logged_in_user.debit_balance})
 
 def business_service_add(request):
     if request.method=="POST":
