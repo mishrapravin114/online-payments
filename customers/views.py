@@ -148,11 +148,12 @@ def pay_individual(request , service_name ,service_owner ,service_price, payment
     #deduct balance
     logged_in_user = User.objects.filter(username=request.user.username).first()
     if payment_type == 'credit' :
-        logged_in_user.wallet = logged_in_user.credit_balance - service_price
+        logged_in_user.credit_balance = logged_in_user.credit_balance - service_price
     elif payment_type == 'wallet' :
         logged_in_user.wallet = logged_in_user.wallet - service_price
     elif payment_type == 'debit' :
-        logged_in_user.wallet = logged_in_user.debit_balance - service_price
+        logged_in_user.debit_balance = logged_in_user.debit_balance - service_price
+        print('ddd',)
 
     logged_in_user.wallet = logged_in_user.wallet - service_price
     logged_in_user.save()   
@@ -166,7 +167,7 @@ def pay_individual(request , service_name ,service_owner ,service_price, payment
     transaction.save()    
     logged_in_user = User.objects.filter(username=request.user.username).first()
     balance = 10
-    return render(request, 'about.html',{'balance' : balance})
+    return redirect('individual_transaction')
 
 #@login_required
 def individual_transaction(request):
