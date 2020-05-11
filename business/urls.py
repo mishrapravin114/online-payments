@@ -27,7 +27,6 @@ urlpatterns = [
     path('business/400/', views.e_400, name='400'),
     path('business/500/', views.e_500, name='500'),
 
-    #abcd
     path('business/profile/<int:pk>/', views.BusinessProfileDetail.as_view(), name='business_profile'),
 
 ] + static(settings.MEDIA_URL,document_root =  settings.MEDIA_ROOT)

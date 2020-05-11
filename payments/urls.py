@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('business.urls')),
     path('customers/', include('customers.urls')),
+    path('log/', views.main_all, name='main_all'),
+
 ]
 
 handler400 = 'business.views.error_400'

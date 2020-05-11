@@ -31,14 +31,13 @@ def business_index(request):
     return render(request, 'index.html', {'credit_num':logged_in_user.credit_number, 'debit_num':logged_in_user.debit_number,'credit_bal':logged_in_user.credit_balance, 'debit_bal':logged_in_user.debit_balance})
 
 def registration(request):   
-
     if request.method == "POST":
         username = request.POST['username']
         first_name = request.POST['firstname']
         last_name = request.POST['lastname'] 
         email =  request.POST['email'] 
         phone = request.POST['phone']
-        profile_type = request.POST['profile_type']
+        profile_type = 'business'
         Error = 0
         message_error = []
         credit_number = random.randint(0,22)
@@ -99,11 +98,7 @@ def otp_verification(request):
     if request.method == "POST":
         userotp = request.POST['otp']
         if str(otp) == userotp:
-            if request.user.profile_type == "Individual":
-                return render(request, 'individual_home.html')
-            else:
-                service = Service.objects.all()
-                return render(request, 'business_signup.html', {'service':service})    
+            return render(request, 'business_signup.html', {'service':service})    
         else:
             messages.error(request, "Invalid OTP! Please try again!")
             return render(request, "register.html")
@@ -161,12 +156,9 @@ def loginUser(request):
         if user is not None:
             login(request, user)
             messages.success(request, "Login Successful! You are welcome!")
-            if request.user.profile_type=="Individual":
-                return render(request, 'individual_home.html', {'user':request.user})
-            else:
-                services = Service.objects.prefetch_related('business_profile').filter(business_profile__user=request.user)     
-                service_list = Service.objects.all()
-                return render(request, 'business_home.html',{'services':services ,'service_list': service_list })
+            services = Service.objects.prefetch_related('business_profile').filter(business_profile__user=request.user)     
+            service_list = Service.objects.all()
+            return render(request, 'business_home.html',{'services':services ,'service_list': service_list })
         else:
             messages.error(request, "Invalid credentials! Please try again!")
             return redirect('home')   
@@ -176,7 +168,7 @@ def loginUser(request):
 
 def logoutUser(request):
     django_logout(request)
-    return render(request, 'home.html')
+    return render(request, 'main.html')
 
 
 def business_home(request):

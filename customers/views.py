@@ -108,7 +108,7 @@ def loginUser_individual(request):
 
 def logout_individual(request):
   django_logout(request)
-  return render(request, 'individual_login.html')
+  return render(request, 'main.html')
 
 def otp_verification_individual(request):
 
